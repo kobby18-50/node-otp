@@ -58,6 +58,6 @@ This project is an OTP (One Time Password) validation API built with Node.js. It
 
 ### Environment Variables
 
-**ACCOUNTSID** = <TWILIO_ACCOUNTSID>
-**AUTHTOKEN** = <TWILIO_AUTHTOKEN>
+- **ACCOUNTSID** = <TWILIO_ACCOUNTSID>
+- **AUTHTOKEN** = <TWILIO_AUTHTOKEN>
 
