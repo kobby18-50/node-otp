@@ -7,6 +7,7 @@ This project is an OTP (One Time Password) validation API built with Node.js. It
 - [Installation](#installation)
 - [Usage](#usage)
 - [Endpoints](#endpoints)
+- [Configuration](#configuration)
 - [Environment Variables](#environment-variables)
 
 ## Installation
@@ -55,9 +56,35 @@ This project is an OTP (One Time Password) validation API built with Node.js. It
     "code" : 12345
   }
 
+### Configuration
+
+To configure the email service using Nodemailer, update the `node-OTP\utils\nodemailerConfig.js` file with your Ethereal email credentials. You will need to set the following environment variables:
+
+1. Create a `.env` file in the root directory if it doesn't exist.
+
+2. Add the following environment variables to the `.env` file:
+    ```env
+    ETHEREAL_EMAIL=your-ethereal-email@example.com
+    ETHEREAL_PASSWORD=your-ethereal-password
+    ```
+
+3. Ensure your `node-OTP\utils\nodemailerConfig.js` file uses these variables:
+    ```javascript
+
+    export default {
+    host: "smtp.ethereal.email",
+    port: 587,
+    auth: {
+      user: process.env.ETHEREAL_EMAIL,
+      pass: process.env.ETHEREAL_PASSWORD,
+    }
+    }
+    ```
+
 
 ### Environment Variables
 
 - **ACCOUNTSID** = <TWILIO_ACCOUNTSID>
 - **AUTHTOKEN** = <TWILIO_AUTHTOKEN>
+
 
