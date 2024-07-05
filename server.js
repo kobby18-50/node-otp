@@ -1,39 +1,19 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import 'express-async-errors'
-
-// errors
-import notFound from './notfound.js'
-import errorhandler from './error-handler.js'
-
-// routes 
-import otpRoutes from './route.js'
+import userRouter from './routes/userRouter.js'
 
 dotenv.config()
 
 const app = express()
 
-app.use(express.json())
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true}));
 
-
-// homepage
 app.get('/', (req,res)=>{
     res.send('Welcome to OTP test')
 })
 
-// routes 
-app.use('/api/v1', otpRoutes)
-
-// not found
-app.use(notFound)
-
-// error 
-app.use(errorhandler)
-
-
-// error handler
-
-//routes
+app.use(userRouter)
 
 const port = process.env.PORT || 5000
 
