@@ -1,6 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import userRouter from './routes/userRouter.js'
+import nodemailer from "nodemailer"
 
 dotenv.config()
 

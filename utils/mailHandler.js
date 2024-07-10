@@ -1,36 +1,34 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import nodemailer from "nodemailer"
 
+// console.log(process.env.ETHEREAL_HOST)
+// console.log(process.env.ETHEREAL_PORT)
+// console.log(process.env.ETHEREAL_USER)
+// console.log(process.env.ETHEREAL_PASSWORD)
+
 const transporter = nodemailer.createTransport({
-    host: process.env.MAIL_HOST,
-    port: process.env.MAIL_PORT,
+    host:  process.env.ETHEREAL_HOST,
+    port:  process.env.ETHEREAL_PORT,
     auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS
+        user: process.env.ETHEREAL_USER,
+        pass: process.env.ETHEREAL_PASSWORD,
     }
 });
 
-export const verifyEmail = async(userEmail, code)=>{
+let message = {
+    from: 'Sender Name <sender@example.com>',
+    to: 'Recipient <recipient@example.com>',
+    subject: 'Nodemailer is unicode friendly ✔',
+    text: 'Hello to myself!',
+    html: '<p><b>Hello</b> to myself!</p>'
+};
 
-        const result =  await transporter.sendMail(
-            {
-                from: 'yourusername@email.com',
-                to: userEmail,
-                subject: 'Please verify your email address',
-                text: code
-              }
-        )
+export const verifyEmail =  async()=>{
+        const result = await transporter.sendMail(message)
+        // console.log(result)
             return result
-
     }
 
-export const verifyUserName = async(email, code)=>{
-    const result =  await transporter.sendMail(
-        {
-            from: 'yourusername@email.com',
-            to: email,
-            subject: 'Please verify your login',
-            text: code
-          }
-    )
-        return result
-}
+
+// export default verifyEmail;
