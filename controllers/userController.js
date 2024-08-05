@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url'
 import { Low } from "lowdb"
 import { JSONFile } from 'lowdb/node'
 import { verifyEmail }  from "../utils/mailHandler.js"
+import { genUserId, genVerificationCode  } from '../utils/specialFun.js';
 
 export const  allUsers = (req, res)=>{
     return res.json({
@@ -14,9 +15,9 @@ export const  allUsers = (req, res)=>{
 
 export const signUpUser = async(req, res)=>{
     const { username, email, password } = req.body
-    const userId = randomBytes(16).toString('hex');
+    const uID = genUserId()
     const userData = {
-        id: userId,
+        id: uID,
         name: username,
         email: email,
         password: password
@@ -27,11 +28,11 @@ export const signUpUser = async(req, res)=>{
     const db = new Low(adapter, {users:[]})
     await db.read(),
     await db.write(db.data.users.push(userData)) 
-    const randCode = Math.floor(1000 + Math.random() * 900000)
-    const result = await verifyEmail(username,email,randCode)
+    const vCode = genVerificationCode()
+    const result = await verifyEmail(username,email,vCode)
     console.log(result)
     res.cookie('username',username)
-    res.cookie('verificationCode', randCode)
+    res.cookie('verificationCode', vCode)
 
     return res.json({
         success: true,
