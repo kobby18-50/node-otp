@@ -1,37 +1,9 @@
-import nodemailer from "nodemailer"
-import dotenv from 'dotenv';
-dotenv.config();
-
-// console.log(process.env.ETHEREAL_HOST)
-// console.log(process.env.ETHEREAL_PORT)
-// console.log(process.env.ETHEREAL_USER)
-// console.log(process.env.ETHEREAL_PASSWORD)
-import {verifyEmail}  from "../utils/mailHandler.js"
-
-// const transporter = nodemailer.createTransport({
-//     host:  process.env.ETHEREAL_HOST,
-//     port:  process.env.ETHEREAL_PORT,
-//     auth: {
-//         user: process.env.ETHEREAL_USER,
-//         pass: process.env.ETHEREAL_PASSWORD,
-//     }
-// });
-// const transporter = nodemailer.createTransport({
-//     host: 'smtp.ethereal.email',
-//     port: 587,
-//     auth: {
-//         user: 'ernesto.boyle@ethereal.email',
-//         pass: 'dPz7ME6QPHcJbqA648'
-//     }
-// });
-
-let message = {
-    from: 'Sender Name <sender@example.com>',
-    to: 'Recipient <recipient@example.com>',
-    subject: 'Nodemailer is unicode friendly ✔',
-    text: 'Hello to myself!',
-    html: '<p><b>Hello</b> to myself!</p>'
-};
+import { join, dirname, } from 'path'
+import { randomBytes } from 'node:crypto';
+import { fileURLToPath } from 'url'
+import { Low } from "lowdb"
+import { JSONFile } from 'lowdb/node'
+import { verifyEmail }  from "../utils/mailHandler.js"
 
 export const  allUsers = (req, res)=>{
     return res.json({
@@ -42,15 +14,44 @@ export const  allUsers = (req, res)=>{
 
 export const signUpUser = async(req, res)=>{
     const { username, email, password } = req.body
+    const userId = randomBytes(16).toString('hex');
+    const userData = {
+        id: userId,
+        name: username,
+        email: email,
+        password: password
+    }
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const file = join(__dirname, '../data/users.json')
+    const adapter = new JSONFile(file)
+    const db = new Low(adapter, {users:[]})
+    await db.read(),
+    await db.write(db.data.users.push(userData)) 
     const randCode = Math.floor(1000 + Math.random() * 900000)
-    // const result = await transporter.sendMail(message)
-    const result = await verifyEmail()
+    const result = await verifyEmail(username,email,randCode)
     console.log(result)
+    res.cookie('username',username)
+    res.cookie('verificationCode', randCode)
+
     return res.json({
         success: true,
         message: "All users.. :>",
-        // data : `${username}, ${email}, ${password}` 
+        data : `${username}, ${email}, ${password}` 
     })
 }
 
-// verifyEmail()
+export const verifyUser = (req, res)=>{
+    const { verificationCode } = req.body
+    const verificationCodeFromCookie = req.cookies.verificationCode
+    if(verificationCodeFromCookie !== verificationCode ){
+        return res.json({
+            success: false,
+            message: "Wrong Verification code..",
+        })
+    }
+    return res.json({
+        success: true,
+        message: "Verification Successful",
+    })
+    
+}
