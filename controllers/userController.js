@@ -2,16 +2,33 @@ import { join, dirname, } from 'path'
 import { fileURLToPath } from 'url'
 import { verifyEmail }  from "../utils/mailHandler.js"
 import { genUserId, genVerificationCode  } from '../utils/specialFun.js';
-import { createData } from '../utils/dataHandler.js'
+import { dbConnection} from '../utils/dataHandler.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const file = join(__dirname, '../data/users.json')
 
-export const  allUsers = (req, res)=>{
-    
+export const  allUsers = async(req, res)=>{
+    const db = dbConnection("users",file)
+    await db.read()
+    const users = await db.data
+    console.log(users)
     return res.json({
         success: true,
+        data : users,
         message: "All users.. :>"
+    })
+}
+
+export const  singleUser = async(req, res)=>{
+    const {userId} = req.params
+    const db = dbConnection("users",file)
+    await db.read()
+    const result = await db.data
+    const user = result['users'].find((user)=>(user.id === userId))
+    return res.json({
+        success: true,
+        message: "User Found",
+        data : user,
     })
 }
 
@@ -24,7 +41,7 @@ export const signUpUser = async(req, res)=>{
         email: email,
         password: password
     }
-    const db  = createData("users",file)
+    const db  = dbConnection("users",file)
     await db.read(),
     await db.write(db.data.users.push(userData)) 
     const vCode = genVerificationCode()
@@ -35,7 +52,7 @@ export const signUpUser = async(req, res)=>{
 
     return res.json({
         success: true,
-        message: "All users.. :>",
+        message: "User Successfully Created.. :)",
         data : `${username}, ${email}, ${password}` 
     })
 }

@@ -1,7 +1,7 @@
 import { Low } from "lowdb"
 import { JSONFile } from 'lowdb/node'
 
-export const createData = (dName, filePath)=>{
+export const dbConnection = (dName, filePath)=>{
     let defaultData = { }
     const newName = dName;
     const newValue = [];
