@@ -1,12 +1,14 @@
 import { join, dirname, } from 'path'
-import { randomBytes } from 'node:crypto';
 import { fileURLToPath } from 'url'
-import { Low } from "lowdb"
-import { JSONFile } from 'lowdb/node'
 import { verifyEmail }  from "../utils/mailHandler.js"
 import { genUserId, genVerificationCode  } from '../utils/specialFun.js';
+import { createData } from '../utils/dataHandler.js'
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const file = join(__dirname, '../data/users.json')
 
 export const  allUsers = (req, res)=>{
+    
     return res.json({
         success: true,
         message: "All users.. :>"
@@ -22,10 +24,7 @@ export const signUpUser = async(req, res)=>{
         email: email,
         password: password
     }
-    const __dirname = dirname(fileURLToPath(import.meta.url));
-    const file = join(__dirname, '../data/users.json')
-    const adapter = new JSONFile(file)
-    const db = new Low(adapter, {users:[]})
+    const db  = createData("users",file)
     await db.read(),
     await db.write(db.data.users.push(userData)) 
     const vCode = genVerificationCode()
