@@ -1,6 +1,7 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import userRouter from './routes/userRouter.js'
+import authRouter from './routes/authRouter.js'
 import cookieParser from 'cookie-parser'
 
 dotenv.config()
@@ -15,6 +16,7 @@ app.get('/', (req,res)=>{
 })
 
 app.use(userRouter)
+app.use(authRouter)
 
 const port = process.env.PORT || 5000
 
