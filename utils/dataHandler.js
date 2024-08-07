@@ -12,7 +12,6 @@ export const dbConnection = (dName, filePath)=>{
 
 }
 
-// createData("users", "file")
 
 
 
